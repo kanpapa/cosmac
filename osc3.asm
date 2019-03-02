@@ -5,20 +5,22 @@
 	.CR	1802
 	.OR	$0000
 *
-START	LDI	#$31	$31->D
-	PLO	5	D->R(5).0
-	SEX	5	5->X
-LOOP1	INP	2	BUS->M(R(5))
-	LDN	5	M(R(5))->D
-	PLO	3	D->R(3).0
-LOOP2	DEC	3	R(3)-1
-	GLO	3	R(3).0->D
-	BNZ	LOOP2	IF D!=0 LOOP2
-	BQ	LOOP3	IF Q=0 LOOP3
-	SEQ		1->Q
-	BR	LOOP1
-
-LOOP3	REQ		0->Q
-	BR	LOOP1
+START	LDI	#IOR	;D <- #IOR
+	PLO	5	;R(5).0 <- D
+	SEX	5	;X <- 5
+LOOP1	INP	2	;M(R(5)) <- BUS;N LINES=2
+	LDN	5	;D <- M(R(5))
+	PLO	3	;R(3).0 <- D
+LOOP2	DEC	3	;R(3)--
+	GLO	3	;D <- R(3).0
+	BNZ	LOOP2	;IF D!=0 LOOP2
+	BQ	LOOP3	;IF Q=0 LOOP3
+	SEQ		;Q <- 1
+	BR	LOOP1	;Branch to LOOP1
+*
+LOOP3	REQ		;Q <- 0
+	BR	LOOP1	;Branch to LOOP1
+*
+IOR	.DB	0	;IO Register
 
 	.EN
