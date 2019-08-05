@@ -36,7 +36,7 @@ LOOP2	LDI     #IOR    ;#IOR -> D
 *
 EXIT1	SEP	0
 WAIT1   OUT     4       ;M(R(3)) -> BUS; R(3)++
-	LDI	#255
+	LDI	#128
 	PHI	2
 LOOP1	DEC     2	;R(2)--
         GHI     2	;R(2).1 -> D
