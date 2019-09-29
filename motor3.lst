@@ -1,0 +1,46 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded 1802 overlay version 3.01.01
+
+Pass two
+0000-                  1        *
+0000-                  2        * Motor driver program 3 for COSMAC
+0000-                  3        * SB-Assembler
+0000-                  4        *
+0000-                  5                .CR     1802    ;To load the 1802 cross overlay
+0000-                  6                .OR     $0000
+0000-                  7        *
+0000-F8 15             8 (   2) START   LDI     #IOR    ;#IOR -> D
+0002-A3                9 (   2)         PLO     3       ;D -> R(3).0
+0003-E3               10 (   2)         SEX     3       ;3 -> X
+0004-                 11        *
+0004-7B               12 (   2)         SEQ             ;1 -> Q
+0005-                 13        *
+0005-3F 05            14 (   2) LOOP1   BN4     LOOP1   ;IF EF4=0 LOOP1 (EF4=Vcc)
+0007-94               15 (   2)         GHI     4       ;R(4).1 -> D
+0008-53               16 (   2)         STR     3       ;D -> M(R(3))
+0009-64               17 (   2)         OUT     4       ;M(R(3)) -> BUS; R(3)++
+000A-23               18 (   2)         DEC     3       ;R(3)--
+000B-14               19 (   2)         INC     4       ;R(4)++
+000C-                 20        *
+000C-22               21 (   2) WAIT1   DEC     2       ;R(2)--
+000D-92               22 (   2)         GHI     2       ;R(2).1 -> D
+000E-3A 0C            23 (   2)         BNZ     WAIT1   ;IF D!=0 WAIT1
+0010-                 24        *
+0010-53               25 (   2) STOP1   STR     3       ;D -> M(R(3))
+0011-64               26 (   2)         OUT     4       ;M(R(3)) -> BUS; R(3)++
+0012-23               27 (   2)         DEC     3       ;R(3)--
+0013-30 05            28 (   2)         BR      LOOP1   ;Branch to LOOP1
+0015-                 29        *
+0015-00               30        IOR     .DB     0       ;IO Register
+0016-                 31
+0016-                 32                .EN
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+

@@ -1,0 +1,64 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded 1802 overlay version 3.01.01
+
+Pass two
+0000-                  1        *
+0000-                  2        * Motor driver program for COSMAC-R2D2
+0000-                  3        * SB-Assembler
+0000-                  4        *
+0000-                  5        * BUS0 --- AIN1
+0000-                  6        * BUS1 --- AIN2
+0000-                  7        * BUS2 --- BIN1
+0000-                  8        * BUS3 --- BIN2
+0000-                  9        * Q    --- PWMA/B
+0000-                 10        *
+0000-                 11        * 動作
+0000-                 12        * R2D2は1モーターのため前進、後進のみの動き。テーブルから落ちないように注意。
+0000-                 13        * 前面にPUSH SWがあるのでこれを押すと動くようにする。前進して後進は繰り替えす。
+0000-                 14        * 停止する場合はRESETを押すことにする。
+0000-                 15        *
+0000-                 16                .CR     1802    ;To load the 1802 cross overlay
+0000-                 17                .OR     $0000
+0000-                 18        *
+0000-                 19        * Wait Push SW
+0000-                 20        *
+0000-3F 00            21 (   2) START   BN4     START   ;IF EF4=0 START (EF4=Vcc)
+0002-F8 0F            22 (   2)         LDI     #WAIT1
+0004-A7               23 (   2)         PLO     7
+0005-7B               24 (   2)         SEQ             ;1 -> Q
+0006-                 25
+0006-F8 19            26 (   2) LOOP2   LDI     #IOR    ;#IOR -> D
+0008-A3               27 (   2)         PLO     3       ;D -> R(3).0
+0009-E3               28 (   2)         SEX     3       ;3 -> X
+000A-                 29        *
+000A-D7               30 (   2)         SEP     7       ;Forward
+000B-D7               31 (   2)         SEP     7       ;Back
+000C-                 32        *
+000C-30 06            33 (   2)         BR      LOOP2   ;Branch to MAIN
+000E-                 34        *
+000E-                 35        * WAIT Routine
+000E-                 36        *
+000E-D0               37 (   2) EXIT1   SEP     0
+000F-64               38 (   2) WAIT1   OUT     4       ;M(R(3)) -> BUS; R(3)++
+0010-F8 80            39 (   2)         LDI     #128
+0012-B2               40 (   2)         PHI     2
+0013-22               41 (   2) LOOP1   DEC     2       ;R(2)--
+0014-92               42 (   2)         GHI     2       ;R(2).1 -> D
+0015-3A 13            43 (   2)         BNZ     LOOP1   ;IF D!=0 LOOP1
+0017-30 0E            44 (   2)         BR      EXIT1
+0019-                 45        *
+0019-                 46        * Forward
+0019-01               47        IOR     .DB     01      ;Forward
+001A-02               48                .DB     02      ;Back
+001B-                 49
+001B-                 50                .EN
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+

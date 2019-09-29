@@ -1,0 +1,41 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded 1802 overlay version 3.01.01
+
+Pass two
+0000-                  1        *
+0000-                  2        * AquesTalkPico Sample program 1 for COSMAC
+0000-                  3        * SB-Assembler
+0000-                  4        *
+0000-                  5                .CR     1802
+0000-                  6                .OR     $0000
+0000-                  7        *
+0000-F8 13             8 (   2) START   LDI     #IOR    ;#IOR -> D
+0002-A5                9 (   2)         PLO     5       ;D -> R(5).0
+0003-E5               10 (   2)         SEX     5       ;5 -> X
+0004-                 11        *
+0004-F8 00            12 (   2)         LDI     #0      ;0 -> D
+0006-55               13 (   2)         STR     5       ;D -> M(R(5))
+0007-64               14 (   2)         OUT     4       ;M(R(5)) -> BUS; R(5)+1 -> R(5)
+0008-25               15 (   2)         DEC     5       ;R(5)-1 -> R(N)
+0009-                 16        *
+0009-F8 01            17 (   2) LOOP1   LDI     #1      ;1 -> D
+000B-F4               18 (   2)         ADD             ;M(R(X))+D -> DF,D
+000C-55               19 (   2)         STR     5       ;D -> M(R(5))
+000D-3F 09            20 (   2)         BN4     LOOP1   ;IF EF4=0 MAIN
+000F-64               21 (   2)         OUT     4       ;M(R(5)) -> BUS; R(5)+1 -> R(5)
+0010-25               22 (   2)         DEC     5       ;R(5)--
+0011-30 09            23 (   2)         BR      LOOP1   ;Branch to LOOP1
+0013-                 24        *
+0013-00               25        IOR     .DB     0       ;IO Register
+0014-                 26
+0014-                 27                .EN
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+

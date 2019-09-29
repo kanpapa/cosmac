@@ -1,0 +1,59 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded 1802 overlay version 3.01.01
+
+Pass two
+0000-                  1        *
+0000-                  2        * Motor driver program for COSMAC-fox
+0000-                  3        * SB-Assembler
+0000-                  4        *
+0000-                  5        * BUS0 --- AIN1 台車モーターに接続。両キャタピラが逆回転になる接続なのでその場でぐるぐる回る。
+0000-                  6        * BUS1 --- AIN2
+0000-                  7        * BUS2 --- BIN1 後部クランクモーターに接続。しっぽを振る。
+0000-                  8        * BUS3 --- BIN2
+0000-                  9        * Q    --- PWMA/B
+0000-                 10        *
+0000-                 11        * 動作
+0000-                 12        * (1) PUSH SWを押すまで待機
+0000-                 13        * (2) BUS0-BUS3をカウントアップし、AINとBINに出力。
+0000-                 14        * (3) モーターの動きが規則的に変化するため、見た目だとうろうろしているように見える。
+0000-                 15        * (4) 無限ループとしているので止めたいときはトグルスイッチを切ればモータへの電源供給が止まる。
+0000-                 16        * (5) COSMACはそのまま動かすかRTにする。
+0000-                 17        *
+0000-                 18        *
+0000-                 19                .CR     1802    ;To load the 1802 cross overlay
+0000-                 20                .OR     $0000
+0000-                 21        *
+0000-F8 15            22 (   2) START   LDI     #IOR    ;#IOR -> D
+0002-A3               23 (   2)         PLO     3       ;D -> R(3).0
+0003-E3               24 (   2)         SEX     3       ;3 -> X
+0004-                 25        *
+0004-7B               26 (   2)         SEQ             ;1 -> Q
+0005-                 27        *
+0005-3F 05            28 (   2) LOOP1   BN4     LOOP1   ;IF EF4=0 LOOP1 (EF4=Vcc)
+0007-84               29 (   2) LOOP2   GLO     4       ;R(4).0 -> D
+0008-53               30 (   2)         STR     3       ;D -> M(R(3))
+0009-64               31 (   2)         OUT     4       ;M(R(3)) -> BUS; R(3)++
+000A-23               32 (   2)         DEC     3       ;R(3)--
+000B-14               33 (   2)         INC     4       ;R(4)++
+000C-                 34        *
+000C-F8 80            35 (   2)         LDI     #128
+000E-B2               36 (   2)         PHI     2
+000F-22               37 (   2) WAIT1   DEC     2       ;R(2)--
+0010-92               38 (   2)         GHI     2       ;R(2).1 -> D
+0011-3A 0F            39 (   2)         BNZ     WAIT1   ;IF D!=0 WAIT1
+0013-                 40        *
+0013-30 07            41 (   2)         BR      LOOP2   ;Branch to LOOP2
+0015-                 42        *
+0015-00               43        IOR     .DB     0       ;IO Register
+0016-                 44
+0016-                 45                .EN
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+
