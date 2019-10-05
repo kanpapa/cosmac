@@ -1,0 +1,92 @@
+
+SB-Cross Assembler version 3.03.06
+Please visit www.sbprojects.net for a complete description.
+
+Assembling....
+
+Pass one
+Loaded 1802 overlay version 3.01.01
+
+Pass two
+0000-                  1        *
+0000-                  2        * Example program 1 for UT4
+0000-                  3        * Output a string
+0000-                  4        * Using UT4 routine
+0000-                  5        *
+0000-                  6                .CR     1802
+0000-                  7                .OR     $0000
+0000-                  8                .TF     sample1.hex,HEX
+0000-                  9        *
+80EF-                 10        DELAY1 .EQ $80EF
+2800-                 11        CONST2 .EQ $2800
+0000-                 12
+0000-71               13 (   2) INIT:   DIS                             ..DISABLE INTERRUPTS
+0001-00               14                .DB $00
+0002-F8 00            15 (   2)         LDI /WRITE                      ..LOAD MAIN PC R5
+0004-B5               16 (   2)         PHI 5
+0005-F8 09            17 (   2)         LDI #WRITE                      ..U1TH START ADDRESS
+0007-A5               18 (   2)         PLO 5
+0008-D5               19 (   2)         SEP 5                           ..CHANGE PC FROM (>> TO S
+0009-                 20
+0009-                 21        WRITE:
+0009-F8 80            22 (   2)         LDI /DELAY1
+000B-BC               23 (   2)         PHI 12                          ..INIT DELAY POINTER
+000C-F8 EF            24 (   2)         LDI #DELAY1
+000E-AC               25 (   2)         PLO 12
+000F-                 26
+000F-F8 28            27 (   2)         LDI /CONST2
+0011-BE               28 (   2)         PHI 14                          ..INIT THE CONSTANT
+0012-F8 00            29 (   2)         LDI #CONST2
+0014-AE               30 (   2)         PLO 14                          ...AND ECHO BIT
+0015-                 31
+0015-F8 00            32 (   2)         LDI /TEXT
+0017-B6               33 (   2)         PHI 6                           ..PREPARE TEXT POINTER
+0018-F8 36            34 (   2)         LDI #TEXT
+001A-A6               35 (   2)         PLO 6
+001B-                 36
+001B-F8 81            37 (   2)         LDI $81
+001D-B3               38 (   2)         PHI 3                           ..LOAD R3 UITH 819C TO
+001E-F8 9C            39 (   2)         LDI $9C
+0020-A3               40 (   2)         PLO 3                           ..DO A TYPE5D FIRST
+0021-D3               41 (   2)         SEP 3                           ..EXECUTE TYPE5D
+0022-00               42                .DB $00
+0023-                 43
+0023-                 44        OUTPUT:
+0023-F8 A4            45 (   2)         LDI $A4
+0025-A3               46 (   2)         PLO 3                           ..PREPARE R3 FOR TYPE
+0026-46               47 (   2)         LDA 6
+0027-BF               48 (   2)         PHI 15                          ..GET BYTE IN RF.1 AND D
+0028-32 2D            49 (   2)         BZ DELAY                        ..IF IT IS 00 GO TO DELAY
+002A-D3               50 (   2)         SEP 3                           ..OTHERWISE SEND IT
+002B-30 23            51 (   2)         BR OUTPUT                       ..BACK AGAIN
+002D-                 52
+002D-                 53        DELAY:
+002D-F8 FF            54 (   2)         LDI $FF                         ..LOAD DELAY CONSTANT
+002F-B7               55 (   2)         PHI 7                           ..IN R7
+0030-27               56 (   2) LOOP:   DEC 7                           ..DEC (HIS REGISTER
+0031-97               57 (   2)         GHI 7                           ..GET R7.1 IN D-REGISTER
+0032-3A 30            58 (   2)         BNZ LOOP                        ..IE NOT 00 DEC AGAIN
+0034-30 09            59 (   2)         BR WRITE                        ..GO TO NEXT CHARACTER
+0036-                 60
+0036-0D 0A            61        TEXT:   .DB     $0D,$0A
+0038-52 43 41 20 
+     42 52 55 53 
+     53 45 4C 53      62                .AS     /RCA BRUSSELS/
+0044-0D 0A            63                .DB     $0D,$0A
+0046-53 54 52 49 
+     4E 47 20 4F 
+     55 54 50 55 
+     54               64                .AS     /STRING OUTPUT/
+0053-0D 0A            65                .DB     $0D,$0A
+0055-55 53 49 4E 
+     47 20 55 54 
+     34 20 52 4F 
+     55 54 49 4E 
+     45 53            66                .AS     /USING UT4 ROUTINES/
+0067-00               67                .DB     $00                     ..END OF STRING
+0068-                 68
+0068-                 69                .EN
+
+0 Errors found during assembly.
+0 Warnings found during assembly.
+
