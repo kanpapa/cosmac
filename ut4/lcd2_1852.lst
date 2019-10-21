@@ -1,30 +1,36 @@
-0000-                  8                .TF     lcd2_1852.hex,HEX
+0000-                  2                .TF     lcd2_1852.hex,HEX
+0000-                  3        *
+0000-                  4        * SC1602 LCD Display program 1 for COSMAC CDP1852
+0000-                  5        * SB-Assembler
+0000-                  6        *
+0000-                  7                .CR     1802    ;To load the 1802 cross overlay
+0000-                  8                .OR     $0000
 0000-                  9        *
 0000-                 10        * CDP1852        SC1602LCD
 0000-                 11        * DATA_RDY ----> E(6)
 0000-                 12        * DO0 ---------> DB4(11)
 0000-                 13        * DO1 ---------> DB5(12)
-0000-                 14        * D02 ---------> DB6(13)
-0000-                 15        * D03 ---------> DB7(14)
+0000-                 14        * DO2 ---------> DB6(13)
+0000-                 15        * DO3 ---------> DB7(14)
 0000-                 16        * DO7 ---------> RS(4)
 0000-                 17        *         GND--> R/W(5)
 0000-                 18        *         GND--> GND(2)
 0000-                 19        *         +5V--> VDD(1)
 0000-                 20        *
-0000-F8 2D            21 (   2) START   LDI     #MAIN
-0002-A3               22 (   2)         PLO     3
-0003-F8 45            23 (   2)         LDI     #WAIT1
-0005-A7               24 (   2)         PLO     7
-0006-F8 4D            25 (   2)         LDI     #SEND1
-0008-A8               26 (   2)         PLO     8
+0000-F8 2D            21 (   2) START   LDI     #MAIN           ;R3 = MAIN
+0002-A3               22 (   2)         PLO     3               ;D -> R(3).0
+0003-F8 45            23 (   2)         LDI     #WAIT1          ;R7 = WAIT
+0005-A7               24 (   2)         PLO     7               ;D -> R(7).0
+0006-F8 4D            25 (   2)         LDI     #SEND1          ;R8 = SEND
+0008-A8               26 (   2)         PLO     8               ;D -> R(8).0
 0009-F8 13            27 (   2)         LDI     #INTDAT         ;INTDAT -> D
 000B-A4               28 (   2)         PLO     4               ;D -> R(4).0
-000C-F8 00            29 (   2)         LDI     #0
-000E-B3               30 (   2)         PHI     3
-000F-B7               31 (   2)         PHI     7
-0010-B8               32 (   2)         PHI     8
-0011-B4               33 (   2)         PHI     4
-0012-D3               34 (   2)         SEP     3       ; Jump MAIN
+000C-F8 00            29 (   2)         LDI     #0              ;0 -> D
+000E-B3               30 (   2)         PHI     3               ;D -> R(3).1
+000F-B7               31 (   2)         PHI     7               ;D -> R(7).1
+0010-B8               32 (   2)         PHI     8               ;D -> R(8).1
+0011-B4               33 (   2)         PHI     4               ;D -> R(4).1
+0012-D3               34 (   2)         SEP     3               ; Jump MAIN
 0013-                 35        *
 0013-                 36        *---------------------------
 0013-                 37        * LCD Initialize Data(4bit mode, RS=0)
@@ -73,77 +79,76 @@
 002B-84               80                .DB     $84             ;"C" $43
 002C-83               81                .DB     $83             ;
 002D-                 82        *                               ;wait 40us
-002D-                 83        *                               ;wait 40us
-002D-                 84        *----------------------
-002D-                 85        * Main routine
-002D-                 86        *----------------------
-002D-E4               87 (   2) MAIN    SEX     4               ;4 -> X
-002E-                 88        *
-002E-                 89        * LCD Initrize
-002E-                 90        *
-002E-                 91        * Function set (Interface is 8bits long.)
-002E-                 92        *
-002E-65               93 (   2)         OUT     5               ;M(R(X))->BUS, R(X)++
-002F-                 94        *
-002F-                 95        * Wait 4.1ms
-002F-                 96        *
-002F-F8 AA            97 (   2)         LDI     #170            ;Load immediate value 170 into 0
-0031-D7               98 (   2)         SEP     7               ;Call WaitSub
-0032-                 99        *
-0032-                100        * Function set (Interface is 8bits long.)
-0032-                101        *
-0032-65              102 (   2)         OUT     5               ;M(R(X))->BUS, R(X)++
-0033-                103        *
-0033-                104        * Wait 100us
-0033-                105        *
-0033-F8 04           106 (   2)         LDI     #4              ;Load immediate value 4 into 0
-0035-D7              107 (   2)         SEP     7               ;Call WaitSub
-0036-                108        *
-0036-                109        * Send Initrize command (8byte)
-0036-                110        *
-0036-F8 08           111 (   2)         LDI     #8              ;Send 8 byte
-0038-D8              112 (   2)         SEP     8               ;Call SEND
-0039-                113        *
-0039-                114        * Wait 1.64ms
-0039-                115        *
-0039-F8 40           116 (   2)         LDI     #64             ;Load immediate value 64 into 0
-003B-D7              117 (   2)         SEP     7
-003C-                118        *
-003C-                119        * Send Enrty Mode Set/Set Address
-003C-                120        *
-003C-F8 04           121 (   2)         LDI     #4              ;Send 4 byte
-003E-D8              122 (   2)         SEP     8               ;Call SEND
-003F-                123        *
-003F-                124        * Write data to RAM (bit7=RS=1)
-003F-                125        *
-003F-F8 0C           126 (   2)         LDI     #12             ;Send 12 byte
-0041-D8              127 (   2)         SEP     8               ;Call SEND
-0042-                128        *
-0042-30 42           129 (   2) STOP    BR      STOP            ;HALT
-0044-                130        *
-0044-                131        * WAIT SUB ROUTINE
-0044-                132        *
-0044-D3              133 (   2) EXIT1   SEP     3
-0045-A5              134 (   2) WAIT1   PLO     5               ;Put D in R5,0
-0046-25              135 (   2) LOOP2   DEC     5               ;Decrement R5 by 1 over 8 bits
-0047-85              136 (   2)         GLO     5               ;Get R5.0 to test
-0048-3A 46           137 (   2)         BNZ     LOOP2           ;If R5.0 != 0, branch to LOOP
-004A-30 44           138 (   2)         BR      EXIT1
-004C-                139        *
-004C-                140        * SEND n byte SUB ROUTINE
-004C-                141        *
-004C-D3              142 (   2) EXIT2   SEP     3
-004D-A5              143 (   2) SEND1   PLO     5               ;D -> R(5).0
-004E-65              144 (   2) LOOP6   OUT     5               ;M(R(X)) -> BUS; R(X)++
-004F-C4              145 (   2)         NOP
-0050-C4              146 (   2)         NOP
-0051-C4              147 (   2)         NOP
-0052-C4              148 (   2)         NOP
-0053-C4              149 (   2)         NOP
-0054-C4              150 (   2)         NOP
-0055-25              151 (   2)         DEC     5               ;R(5).0--
-0056-85              152 (   2)         GLO     5               ;R(5).0 -> D
-0057-3A 4E           153 (   2)         BNZ     LOOP6
-0059-30 4C           154 (   2)         BR      EXIT2
-005B-                155
-005B-                156                .EN
+002D-                 83        *----------------------
+002D-                 84        * Main routine
+002D-                 85        *----------------------
+002D-E4               86 (   2) MAIN    SEX     4               ;4 -> X
+002E-                 87        *
+002E-                 88        * LCD Initrize
+002E-                 89        *
+002E-                 90        * Function set (Interface is 8bits long.)
+002E-                 91        *
+002E-65               92 (   2)         OUT     5               ;M(R(X))->BUS, R(X)++
+002F-                 93        *
+002F-                 94        * Wait 4.1ms
+002F-                 95        *
+002F-F8 AA            96 (   2)         LDI     #170            ;Load immediate value 170 into 0
+0031-D7               97 (   2)         SEP     7               ;Call WaitSub
+0032-                 98        *
+0032-                 99        * Function set (Interface is 8bits long.)
+0032-                100        *
+0032-65              101 (   2)         OUT     5               ;M(R(X))->BUS, R(X)++
+0033-                102        *
+0033-                103        * Wait 100us
+0033-                104        *
+0033-F8 04           105 (   2)         LDI     #4              ;Load immediate value 4 into 0
+0035-D7              106 (   2)         SEP     7               ;Call WaitSub
+0036-                107        *
+0036-                108        * Send Initrize command (8byte)
+0036-                109        *
+0036-F8 08           110 (   2)         LDI     #8              ;Send 8 byte
+0038-D8              111 (   2)         SEP     8               ;Call SEND
+0039-                112        *
+0039-                113        * Wait 1.64ms
+0039-                114        *
+0039-F8 40           115 (   2)         LDI     #64             ;Load immediate value 64 into 0
+003B-D7              116 (   2)         SEP     7
+003C-                117        *
+003C-                118        * Send Enrty Mode Set/Set Address
+003C-                119        *
+003C-F8 04           120 (   2)         LDI     #4              ;Send 4 byte
+003E-D8              121 (   2)         SEP     8               ;Call SEND
+003F-                122        *
+003F-                123        * Write data to RAM (bit7=RS=1)
+003F-                124        *
+003F-F8 0C           125 (   2)         LDI     #12             ;Send 12 byte
+0041-D8              126 (   2)         SEP     8               ;Call SEND
+0042-                127        *
+0042-30 42           128 (   2) STOP    BR      STOP            ;HALT
+0044-                129        *
+0044-                130        * WAIT SUB ROUTINE
+0044-                131        *
+0044-D3              132 (   2) EXIT1   SEP     3
+0045-A5              133 (   2) WAIT1   PLO     5               ;Put D in R5,0
+0046-25              134 (   2) LOOP2   DEC     5               ;Decrement R5 by 1 over 8 bits
+0047-85              135 (   2)         GLO     5               ;Get R5.0 to test
+0048-3A 46           136 (   2)         BNZ     LOOP2           ;If R5.0 != 0, branch to LOOP
+004A-30 44           137 (   2)         BR      EXIT1
+004C-                138        *
+004C-                139        * SEND n byte SUB ROUTINE
+004C-                140        *
+004C-D3              141 (   2) EXIT2   SEP     3
+004D-A5              142 (   2) SEND1   PLO     5               ;Put D in R(5).0
+004E-65              143 (   2) LOOP6   OUT     5               ;M(R(X)) -> BUS; R(X)++
+004F-C4              144 (   2)         NOP                     ;WAIT
+0050-C4              145 (   2)         NOP                     ;WAIT
+0051-C4              146 (   2)         NOP                     ;WAIT
+0052-C4              147 (   2)         NOP                     ;WAIT
+0053-C4              148 (   2)         NOP                     ;WAIT
+0054-C4              149 (   2)         NOP                     ;WAIT
+0055-25              150 (   2)         DEC     5               ;Decrement R5
+0056-85              151 (   2)         GLO     5               ;Get R5.0 to test
+0057-3A 4E           152 (   2)         BNZ     LOOP6           ;If R(5).0 != 0, branch to LOOP
+0059-30 4C           153 (   2)         BR      EXIT2
+005B-                154
+005B-                155                .EN
