@@ -6,28 +6,28 @@
 0000-                  7                .CR     1802    ;To load the 1802 cross overlay
 0000-                  8                .OR     $0000
 0000-                  9        *
-0000-F8 07            10 (   2) START   LDI     LOOP1   ;LOOP1 -> D
-0002-A3               11 (   2)         PLO     3       ;D -> R(3).0
-0003-F8 00            12 (   2)         LDI     0
-0005-B3               13 (   2)         PHI     3
-0006-D3               14 (   2)         SEP     3       ;3 -> P
-0007-F8 40            15 (   2) LOOP1   LDI     $40     ;$40 -> D
-0009-A4               16 (   2)         PLO     4       ;D -> R(4).0
-000A-F8 00            17 (   2)         LDI     0
-000C-B4               18 (   2)         PHI     4
-000D-F8 20            19 (   2) LOOP2   LDI     $20     ;$20 -> D
-000F-A0               20 (   2)         PLO     0       ;D -> R(0).0
-0010-F8 00            21 (   2)         LDI     0
-0012-B0               22 (   2)         PHI     0
-0013-00               23 (   *) LOOP3   IDL
-0014-3D 13            24 (   2)         BN2     LOOP3
-0016-15               25 (   2)         INC     5
-0017-85               26 (   2)         GLO     5
-0018-54               27 (   2)         STR     4
-0019-14               28 (   2)         INC     4
-001A-84               29 (   2)         GLO     4
-001B-FF F0            30 (   2)         SMI     $F0
-001D-3A 0D            31 (   2)         BNZ     LOOP2
-001F-30 07            32 (   2)         BR      LOOP1
-0021-                 33
-0021-                 34                .EN
+0000-F8 00            10 (   2) START   LDI     0       ;initrize register R(3).1 R(4).1
+0002-B3               11 (   2)         PHI     3
+0003-B4               12 (   2)         PHI     4
+0004-F8 08            13 (   2)         LDI     SETSTR  ;SETSTR address R(3)
+0006-A3               14 (   2)         PLO     3
+0007-D3               15 (   2)         SEP     3       ;Change Program Counter R(3)
+0008-                 16        *
+0008-F8 40            17 (   2) SETSTR  LDI     $40     ;Set data store address R(4)=$0040
+000A-A4               18 (   2)         PLO     4
+000B-F8 20            19 (   2) SETDMA  LDI     $20     ;Set DMA address R(0)=$0020
+000D-A0               20 (   2)         PLO     0
+000E-F8 00            21 (   2)         LDI     0
+0010-B0               22 (   2)         PHI     0
+0011-00               23 (   *) DWAIT   IDL             ;DMA waiting
+0012-3D 11            24 (   2)         BN2     DWAIT   ;Check VSYNC(EF2)
+0014-15               25 (   2)         INC     5       ;Counter R(5)++
+0015-85               26 (   2)         GLO     5
+0016-54               27 (   2)         STR     4       ;Store count data
+0017-14               28 (   2)         INC     4       ;Store address R(4)++
+0018-84               29 (   2)         GLO     4       ;Check store address > $F0
+0019-FF F0            30 (   2)         SMI     $F0
+001B-3A 0B            31 (   2)         BNZ     SETDMA
+001D-30 08            32 (   2)         BR      SETSTR
+001F-                 33
+001F-                 34                .EN
